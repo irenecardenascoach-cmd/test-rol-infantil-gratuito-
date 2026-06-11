@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tu Mapa Relacional — Relation Line™</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bone:   #DED1C1;
+      --teal:   #88A18C;
+      --td:     #4a6a4e;
+      --tl:     #d4e2d6;
+      --blue:   #7E99B4;
+      --bl:     #dce8f2;
+      --cinn:   #BB6F58;
+      --cl:     #f5e6e0;
+      --cd:     #7a3e2a;
+      --bg:     #2C2018;
+      --card:   #38291c;
+      --card2:  #422f1e;
+      --border: rgba(222,209,193,0.14);
+      --tx:     #F5EDE2;
+      --tm:     #C9B89E;
+      --ts:     #8a7a6a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(136,161,140,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 80%, rgba(187,111,88,0.14) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(126,153,180,0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.5;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 5rem;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeUp 0.4s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── BRAND HEADER ───────────────────────────────────────── */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 2.5rem;
+    }
+    .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cinn); }
+    .brand-name {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--tm);
+    }
+
+    /* ─── TYPOGRAPHY ─────────────────────────────────────────── */
+    .eyebrow {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--cinn); margin-bottom: 8px;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 44px; font-weight: 500;
+      line-height: 1.08; color: var(--tx);
+      margin-bottom: 14px;
+    }
+    .hero-title em { color: var(--cinn); font-style: italic; }
+    .hero-sub {
+      font-size: 13px; color: var(--tm);
+      line-height: 1.9; margin-bottom: 2rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-weight: 600;
+      color: var(--tx); line-height: 1.2; margin-bottom: 10px;
+    }
+    .section-title em { color: var(--cinn); font-style: italic; }
+    .body-text {
+      font-size: 13px; color: var(--tm);
+      line-height: 1.9; margin-bottom: 1.25rem;
+    }
+
+    /* ─── CARDS ──────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .card-accent { background: var(--card2); border-color: rgba(136,161,140,0.2); }
+
+    /* ─── ROLES ROW ──────────────────────────────────────────── */
+    .roles-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1.75rem; }
+    .role-pill {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1rem 0.75rem; text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .role-pill:hover { border-color: rgba(222,209,193,0.3); transform: translateY(-2px); }
+    .role-icon { width: 42px; height: 42px; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
+    .role-icon.s { background: rgba(136,161,140,0.2); }
+    .role-icon.v { background: rgba(126,153,180,0.2); }
+    .role-icon.p { background: rgba(187,111,88,0.2); }
+    .role-pill .rname { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--tx); margin-bottom: 4px; }
+    .role-pill .rdesc { font-size: 10px; color: var(--ts); line-height: 1.5; }
+
+    .meta-row { display: flex; gap: 16px; font-size: 11px; color: var(--ts); margin-bottom: 2rem; letter-spacing: 0.04em; }
+    .meta-row span { display: flex; align-items: center; gap: 5px; }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--cinn); }
+
+    /* ─── BUTTONS ────────────────────────────────────────────── */
+    .btn {
+      display: block; width: 100%;
+      padding: 15px 20px; border-radius: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; border: none;
+      transition: all 0.2s; text-align: center;
+      text-decoration: none; margin-bottom: 10px;
+    }
+    .btn-cinn { background: var(--cinn); color: #fff; box-shadow: 0 4px 20px rgba(187,111,88,0.35); }
+    .btn-cinn:hover { background: #c97860; box-shadow: 0 6px 28px rgba(187,111,88,0.45); transform: translateY(-1px); }
+    .btn-teal { background: var(--teal); color: #fff; box-shadow: 0 4px 20px rgba(136,161,140,0.3); }
+    .btn-teal:hover { background: var(--td); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border); color: var(--tm);
+    }
+    .btn-ghost:hover { background: rgba(222,209,193,0.06); color: var(--tx); }
+
+    /* CTA principal de la landing — más grande e impactante */
+    .btn-xl {
+      padding: 19px 24px;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      border-radius: 12px;
+    }
+
+    /* ─── PROGRESS BAR ───────────────────────────────────────── */
+    .prog-wrap { margin-bottom: 2rem; }
+    .prog-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .prog-top span { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ts); }
+    .prog-track { height: 3px; background: rgba(222,209,193,0.12); border-radius: 2px; }
+    .prog-fill { height: 100%; border-radius: 2px; background: var(--cinn); transition: width 0.4s ease; }
+
+    /* ─── QUESTION ───────────────────────────────────────────── */
+    .dim-label { font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+    .q-text { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 500; color: var(--tx); line-height: 1.4; margin-bottom: 1.5rem; }
+    .opts { display: flex; flex-direction: column; gap: 8px; }
+    .opt {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 13px 18px;
+      font-size: 13px; color: var(--tm);
+      cursor: pointer; transition: all 0.17s; line-height: 1.6; text-align: left;
+    }
+    .opt:hover { border-color: rgba(187,111,88,0.4); color: var(--tx); transform: translateX(3px); }
+    .opt.sel { border-color: var(--cinn); background: rgba(187,111,88,0.12); color: #e8b49e; font-weight: 500; }
+    .nav-row { display: flex; gap: 10px; margin-top: 1.5rem; }
+    .nav-row .btn { flex: 1; margin-bottom: 0; }
+
+    /* ─── DIVIDER ────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--border); margin: 1.75rem 0; }
+
+    /* ─── RESULTADO / DIAGNÓSTICO ────────────────────────────── */
+    .diag-header {
+      text-align: center;
+      padding: 2rem 0 1.5rem;
+    }
+    .avatar-ring {
+      width: 100px; height: 100px; border-radius: 50%;
+      border: 2px solid rgba(222,209,193,0.2);
+      background: var(--card);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 0 0 6px rgba(222,209,193,0.04), 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .profile-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px; font-weight: 600;
+      color: var(--tx); margin-bottom: 6px;
+    }
+    .profile-tag {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 17px;
+      color: var(--cinn); line-height: 1.4;
+    }
+
+    .metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 1.5rem 0; }
+    .metric { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
+    .metric .ml { font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ts); margin-bottom: 5px; }
+    .metric .mv { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--tx); }
+
+    /* Insight cards */
+    .insight-stack { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.75rem; }
+    .insight-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 18px;
+    }
+    .insight-item .ilabel {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--ts); margin-bottom: 6px;
+    }
+    .insight-item .itext { font-size: 13px; color: var(--tm); line-height: 1.75; }
+    .insight-item.hl-cinn { border-color: rgba(187,111,88,0.35); background: rgba(187,111,88,0.07); }
+    .insight-item.hl-teal { border-color: rgba(136,161,140,0.35); background: rgba(136,161,140,0.07); }
+
+    /* ─── BRIDGE: de resultado a BCL ────────────────────────── */
+    .bridge-card {
+      background: var(--card2);
+      border: 1px solid rgba(187,111,88,0.3);
+      border-radius: 16px; padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+    .bridge-card .bridge-icon { font-size: 36px; margin-bottom: 12px; }
+    .bridge-card .bridge-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 600;
+      color: var(--tx); margin-bottom: 8px; line-height: 1.3;
+    }
+    .bridge-card .bridge-body { font-size: 12px; color: var(--tm); line-height: 1.85; }
+
+    /* ─── LANDING BCL ────────────────────────────────────────── */
+
+    /* Hero de la landing */
+    .bcl-hero {
+      text-align: center;
+      padding: 1rem 0 0.5rem;
+    }
+    .bcl-kicker {
+      display: inline-block;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: #fff;
+      background: var(--cinn);
+      padding: 5px 14px; border-radius: 20px;
+      margin-bottom: 1.25rem;
+    }
+    .bcl-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px; font-weight: 600;
+      line-height: 1.1; color: var(--tx);
+      margin-bottom: 14px;
+    }
+    .bcl-headline em { color: var(--cinn); font-style: italic; }
+    .bcl-sub { font-size: 13px; color: var(--tm); line-height: 1.9; margin-bottom: 1.75rem; }
+
+    /* Contexto personalizado según perfil */
+    .bcl-personalized {
+      background: rgba(187,111,88,0.1);
+      border-left: 3px solid var(--cinn);
+      border-radius: 0 12px 12px 0;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1.75rem;
+    }
+    .bcl-personalized .bp-label {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--cinn); margin-bottom: 6px;
+    }
+    .bcl-personalized .bp-text { font-size: 13px; color: var(--tm); line-height: 1.8; }
+    .bcl-personalized .bp-text strong { color: var(--tx); font-weight: 600; }
+
+    /* Video placeholder */
+    .video-wrap {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .video-ph-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(187,111,88,0.15) 0%, rgba(44,32,24,0.8) 100%);
+    }
+    .video-ph-content { position: relative; z-index: 1; text-align: center; }
+    .play-btn {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--cinn);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      box-shadow: 0 0 0 10px rgba(187,111,88,0.18), 0 8px 32px rgba(187,111,88,0.4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 10px rgba(187,111,88,0.18), 0 8px 32px rgba(187,111,88,0.4); }
+      50%       { box-shadow: 0 0 0 18px rgba(187,111,88,0.08), 0 8px 32px rgba(187,111,88,0.4); }
+    }
+    .play-btn svg { margin-left: 4px; }
+    .video-ph-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 500;
+      color: var(--tx); margin-bottom: 4px;
+    }
+    .video-ph-sub { font-size: 11px; color: var(--ts); }
+    .video-duration {
+      position: absolute; bottom: 12px; right: 14px;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--tm); background: rgba(0,0,0,0.5);
+      padding: 3px 8px; border-radius: 4px;
+    }
+
+    /* Lo que cubre el video */
+    .covers-list {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 1.75rem;
+    }
+    .cover-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .cover-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; font-weight: 600;
+      color: rgba(187,111,88,0.35);
+      line-height: 1; min-width: 28px;
+    }
+    .cover-text { font-size: 12px; color: var(--tm); line-height: 1.7; padding-top: 4px; }
+    .cover-text strong { color: var(--tx); font-weight: 600; }
+
+    /* Prueba social mínima */
+    .social-strip {
+      display: grid; grid-template-columns: repeat(2,1fr);
+      gap: 8px; margin-bottom: 1.75rem;
+    }
+    .social-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px;
+    }
+    .social-quote { font-size: 12px; color: var(--tm); line-height: 1.7; font-style: italic; margin-bottom: 8px; }
+    .social-name { font-size: 10px; color: var(--ts); font-weight: 600; letter-spacing: 0.06em; }
+
+    /* CTA para agendar */
+    .cta-block {
+      background: linear-gradient(135deg, rgba(187,111,88,0.12) 0%, rgba(66,47,30,0.6) 100%);
+      border: 1px solid rgba(187,111,88,0.35);
+      border-radius: 18px; padding: 1.75rem 1.5rem;
+      text-align: center; margin-bottom: 1.25rem;
+      position: relative; overflow: hidden;
+    }
+    .cta-block::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 130px; height: 130px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(187,111,88,0.12) 0%, transparent 70%);
+    }
+    .cta-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--cinn); margin-bottom: 10px;
+    }
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 600;
+      color: var(--tx); line-height: 1.25; margin-bottom: 10px;
+    }
+    .cta-body { font-size: 12px; color: var(--tm); line-height: 1.85; margin-bottom: 1.5rem; }
+
+    /* Urgencia / escasez */
+    .scarcity-note {
+      display: flex; align-items: center; justify-content: center;
+      gap: 7px; font-size: 11px; color: var(--ts);
+      margin-top: 10px;
+    }
+    .sc-dot { width: 7px; height: 7px; border-radius: 50%; background: #e8a87c; animation: blink 1.4s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    /* Garantía / reassurance */
+    .reassurance {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: rgba(136,161,140,0.08);
+      border: 1px solid rgba(136,161,140,0.25);
+      border-radius: 12px; padding: 14px;
+      margin-bottom: 1rem;
+    }
+    .reassurance-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .reassurance-text { font-size: 12px; color: var(--tm); line-height: 1.75; }
+    .reassurance-text strong { color: #a8c8ac; font-weight: 600; }
+
+    /* ─── MOBILE ─────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .hero-title, .bcl-headline { font-size: 32px; }
+      .roles-row { gap: 7px; }
+      .role-pill { padding: 0.75rem 0.5rem; }
+      .role-pill .rname { font-size: 14px; }
+      .social-strip { grid-template-columns: 1fr; }
+      .profile-name { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════════════════════════════════════════
+       S1 — INTRO
+  ═══════════════════════════════════════════ -->
+  <div id="s-intro" class="screen active">
+    <div class="brand-header">
+      <div class="brand-dot"></div>
+      <div class="brand-name">Relation Line™</div>
+    </div>
+
+    <div class="eyebrow">Tu primera microvictoria empieza aquí</div>
+    <div class="hero-title">Descubre tu<br><em>Mapa Relacional</em></div>
+    <div class="hero-sub">
+      Todos llevamos los tres roles dentro: Salvador, Víctima y Perseguidor.
+      Hay uno que dirige silenciosamente cómo te vinculas — y cómo terminas sufriendo.
+      Este test te lo muestra con honestidad y sin juicio.
+    </div>
+
+    <div class="roles-row">
+      <div class="role-pill">
+        <div class="role-icon s">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3L18 7V12C18 16 14.5 19 11 20C7.5 19 4 16 4 12V7L11 3Z" fill="#88A18C"/></svg>
+        </div>
+        <div class="rname">Salvador</div>
+        <div class="rdesc">Cuidas a todos.<br>¿Quién te cuida a ti?</div>
+      </div>
+      <div class="role-pill">
+        <div class="role-icon v">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 13 Q8 8 11 13 Q14 18 18 13" stroke="#7E99B4" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M4 9 Q8 4 11 9 Q14 14 18 9" stroke="#7E99B4" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/></svg>
+        </div>
+        <div class="rname">Víctima</div>
+        <div class="rdesc">El dolor te pasa.<br>Y es real.</div>
+      </div>
+      <div class="role-pill">
+        <div class="role-icon p">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><polygon points="11,3 19,17 3,17" fill="#BB6F58"/></svg>
+        </div>
+        <div class="rname">Perseguidor</div>
+        <div class="rdesc">Exiges o controlas.<br>Desde el miedo.</div>
+      </div>
+    </div>
+
+    <div class="card card-accent" style="margin-bottom:1.75rem;">
+      <div class="eyebrow" style="color:var(--teal);margin-bottom:8px;">Después del test vas a recibir</div>
+      <div style="font-size:13px;color:var(--tm);line-height:1.85;">
+        Tu perfil relacional completo · Tu patrón emocional · Lo que puedes soltar · Tu mayor fortaleza oculta — y acceso a un entrenamiento que explica qué hacer con todo eso.
+      </div>
+    </div>
+
+    <div class="meta-row">
+      <span><div class="meta-dot"></div>15 preguntas</span>
+      <span><div class="meta-dot"></div>5 minutos</span>
+      <span><div class="meta-dot"></div>Sin respuestas correctas</span>
+    </div>
+
+    <button class="btn btn-cinn" onclick="startTest()">Comenzar mi mapa relacional →</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       S2 — TEST
+  ═══════════════════════════════════════════ -->
+  <div id="s-test" class="screen">
+    <div class="brand-header">
+      <div class="brand-dot"></div>
+      <div class="brand-name">Relation Line™ · Test</div>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-top">
+        <span id="prog-label">Pregunta 1 de 15</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:6.6%"></div></div>
+    </div>
+
+    <div class="dim-label" id="q-dim"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="opts" id="q-opts"></div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="prevQ()" id="btn-prev" style="display:none;">← Anterior</button>
+      <button class="btn btn-cinn" onclick="nextQ()" id="btn-next" style="display:none;">Siguiente →</button>
+      <button class="btn btn-cinn" onclick="finishTest()" id="btn-finish" style="display:none;">Ver mi diagnóstico →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       S3 — DIAGNÓSTICO COMPLETO
+  ═══════════════════════════════════════════ -->
+  <div id="s-result" class="screen">
+    <div class="brand-header">
+      <div class="brand-dot"></div>
+      <div class="brand-name">Relation Line™ · Tu diagnóstico</div>
+    </div>
+
+    <div class="diag-header">
+      <div class="avatar-ring" id="r-avatar"></div>
+      <div class="profile-name" id="r-name"></div>
+      <div class="profile-tag" id="r-tag"></div>
+    </div>
+
+    <div class="metrics" id="r-metrics"></div>
+
+    <div class="insight-stack" id="r-insights"></div>
+
+    <!-- Bloque de profundidad extra: qué significa este perfil en tus relaciones -->
+    <div class="card" style="margin-bottom:1rem;">
+      <div class="eyebrow" style="color:var(--teal);margin-bottom:8px;">Lo que este diagnóstico significa en tu vida</div>
+      <div class="body-text" id="r-meaning" style="margin-bottom:0;"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Bridge hacia la landing -->
+    <div class="bridge-card">
+      <div class="bridge-icon">🎯</div>
+      <div class="bridge-title">El siguiente paso está diseñado<br>para tu perfil exacto.</div>
+      <div class="bridge-body">
+        Hay un entrenamiento gratuito donde te explico exactamente qué está pasando en tus relaciones — y qué puedes hacer diferente.<br><br>
+        Está listo para ti ahora mismo.
+      </div>
+    </div>
+
+    <button class="btn btn-cinn btn-xl" onclick="goScreen('s-bcl')">Ver el entrenamiento gratuito →</button>
+    <div style="text-align:center;font-size:11px;color:var(--ts);margin-top:6px;">Sin costo · Sin spam · Solo claridad</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       S4 — LANDING BCL
+  ═══════════════════════════════════════════ -->
+  <div id="s-bcl" class="screen">
+    <div class="brand-header">
+      <div class="brand-dot"></div>
+      <div class="brand-name">Relation Line™ · Entrenamiento</div>
+    </div>
+
+    <!-- Hero -->
+    <div class="bcl-hero">
+      <div class="bcl-kicker">Entrenamiento gratuito</div>
+      <div class="bcl-headline">Cómo salir del patrón<br>que te tiene <em>repitiendo</em><br>las mismas relaciones</div>
+      <div class="bcl-sub">
+        Esto no es un curso. Es una sesión donde te explico el mecanismo exacto detrás de tu historia relacional — y los primeros pasos reales para cambiarlo.
+      </div>
+    </div>
+
+    <!-- Contexto personalizado segun perfil -->
+    <div class="bcl-personalized" id="bcl-personal"></div>
+
+    <!-- VIDEO YOUTUBE -->
+    <div class="vsl-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; border-radius: 16px; margin-bottom: 1.5rem;">
+      <iframe
+        src="https://www.youtube.com/embed/TU_CODIGO_AQUÍ?rel=0&modestbranding=1&controls=1"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: 16px;"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <!-- FIN VIDEO -->
+
+    <!-- Lo que cubre -->
+    <div class="eyebrow" style="margin-bottom:14px;">Qué vas a entender en esta sesión</div>
+    <div class="covers-list">
+      <div class="cover-item">
+        <div class="cover-num">1</div>
+        <div class="cover-text"><strong>Por qué repites el mismo tipo de relación</strong> aunque jures que no lo harás — y el mecanismo emocional que lo mantiene activo.</div>
+      </div>
+      <div class="cover-item">
+        <div class="cover-num">2</div>
+        <div class="cover-text"><strong>Cómo funciona el triángulo de Karpman en tu vida real</strong> — no como teoría, sino como el guion que llevas siguiendo sin saberlo.</div>
+      </div>
+      <div class="cover-item">
+        <div class="cover-num">3</div>
+        <div class="cover-text"><strong>El primer movimiento concreto que rompe el patrón</strong> — sin necesitar que la otra persona cambie nada.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Prueba social ligera -->
+    <div class="eyebrow" style="margin-bottom:12px;">Lo que otras mujeres vivieron</div>
+    <div class="social-strip">
+      <div class="social-card">
+        <div class="social-quote">"Entendí en 20 minutos lo que dos años de terapia no me habían podido explicar."</div>
+        <div class="social-name">ANDREA, 34 · BOGOTÁ</div>
+      </div>
+      <div class="social-card">
+        <div class="social-quote">"Por fin puse nombre a lo que sentía. Eso solo ya cambió algo en mí."</div>
+        <div class="social-name">VALENTINA, 29 · MEDELLÍN</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CTA AGENDAR LLAMADA -->
+    <div class="cta-block">
+      <div class="cta-label">El siguiente paso</div>
+      <div class="cta-title">¿Quieres saber exactamente<br>qué hacer en tu caso?</div>
+      <div class="cta-body">
+        Hay un espacio para hablar contigo directamente. En esa llamada revisamos tu diagnóstico, lo que está pasando en tu vida y si hay una forma de trabajarlo juntas.<br><br>
+        No es un pitch de ventas. Es una conversación real.
+      </div>
+
+      <!-- 🔧 REEMPLAZA EL href CON TU LINK DE CALENDLY / AGENDAMIENTO -->
+      <a class="btn btn-cinn btn-xl" href="PLACEHOLDER_LINK_AGENDAMIENTO" target="_blank" id="cta-book-btn">
+        Quiero hablar contigo → Agendar mi llamada
+      </a>
+
+      <div class="scarcity-note">
+        <div class="sc-dot"></div>
+        <span>Espacios limitados cada semana</span>
+      </div>
+    </div>
+
+    <div class="reassurance">
+      <div class="reassurance-icon">🔒</div>
+      <div class="reassurance-text">
+        <strong>Sin compromiso de compra.</strong><br>
+        Esta llamada es para que las dos podamos ver si hay algo en lo que pueda acompañarte. Si no hay un fit real, te lo digo sin rodeos.
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" onclick="goScreen('s-result')" style="font-size:11px;padding:10px;margin-top:4px;">← Volver a mi diagnóstico</button>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ─── PREGUNTAS ───────────────────────────────────────────── */
+const Qs = [
+  {dim:"A · Tu rol en el triángulo",q:"Cuando alguien cercano tiene un problema, ¿qué haces casi automáticamente?",opts:[["Busco la forma de ayudarle, aunque no me hayan pedido nada","S",2],["Me siento mal y pienso en lo que yo también estoy viviendo","V",2],["Me molesto si la persona no hace nada por resolver su situación","P",2],["Escucho, pero espero a que me pidan ayuda","N",0]]},
+  {dim:"A · Tu rol en el triángulo",q:"En una discusión fuerte de pareja, ¿cuál es tu postura más frecuente?",opts:[["Cedo para evitar que la situación escale más","S",2],["Siento que siempre me atacan sin razón","V",2],["Señalo claramente lo que está mal y exijo un cambio","P",2],["Intento entender los dos lados antes de hablar","N",0]]},
+  {dim:"A · Tu rol en el triángulo",q:"Cuando una relación termina, ¿qué sientes con más fuerza?",opts:[["Que lo di todo y no fue suficiente","S",2],["Que me hicieron daño y no lo merezco","V",2],["Rabia y ganas de entender qué falló para señalarlo","P",2],["Tristeza, pero también alivio","N",0]]},
+  {dim:"A · Tu rol en el triángulo",q:"¿Cómo te relacionas con tus propias necesidades emocionales?",opts:[["Las pospongo; primero están los demás","S",2],["Siento que nadie las ve ni las satisface","V",2],["Puedo nombrarlas pero me frustra no verlas cubiertas","P",2],["Las expreso aunque me cueste","N",0]]},
+  {dim:"A · Tu rol en el triángulo",q:"Cuando alguien que aprecias toma una decisión que te parece un error, ¿qué haces?",opts:[["Le doy mi opinión aunque no me la pidan","S",2],["Me preocupo mucho y me siento impotente","V",2],["Se lo digo directo y espero que lo cambie","P",2],["Se lo comparto una vez y respeto su decisión","N",0]]},
+  {dim:"B · Tu dependencia emocional",q:"¿Con qué frecuencia necesitas validación de tu pareja o personas cercanas para sentirte bien?",opts:[["Casi siempre; sin eso me siento insegur@","Alta",3],["Bastante seguido, especialmente si estoy estresad@","Media",2],["A veces, pero puedo gestionarlo solo/a","Baja",1],["Rara vez lo necesito","Muy baja",0]]},
+  {dim:"B · Tu dependencia emocional",q:"Si tu pareja o alguien importante no te responde en horas, ¿qué ocurre dentro de ti?",opts:[["Entro en un estado de ansiedad o catastrofismo","Alta",3],["Me inquieto pero intento distraerme","Media",2],["Lo noto pero puedo regularlo bien","Baja",1],["No me genera mayor reacción","Muy baja",0]]},
+  {dim:"B · Tu dependencia emocional",q:"¿Cuánto peso tiene la opinión de tu pareja en cómo te percibes a ti mism@?",opts:[["Es determinante; si me critica, me derrumbo","Alta",3],["Bastante; me afecta aunque trate de no dejarme llevar","Media",2],["Algo, pero tengo una visión propia bastante estable","Baja",1],["Poca; soy yo quien define cómo me veo","Muy baja",0]]},
+  {dim:"B · Tu dependencia emocional",q:"En relaciones pasadas, ¿has tolerado cosas que te hacían daño por miedo a perder a la persona?",opts:[["Sí, muchas veces y por mucho tiempo","Alta",3],["Sí, algunas veces","Media",2],["Una o dos veces, pero aprendí a salir","Baja",1],["No; pongo límites antes de llegar a eso","Muy baja",0]]},
+  {dim:"B · Tu dependencia emocional",q:"Cuando estás sin pareja, ¿cómo te sientes en general?",opts:[["Incompleto/a; hay algo que me falta constantemente","Alta",3],["Bien a ratos, pero busco activamente llenar ese espacio","Media",2],["Tranquil@; disfruto mi tiempo solo/a","Baja",1],["Pleno/a; me basto a mí mism@","Muy baja",0]]},
+  {dim:"C · Exposición a vínculos narcisistas",q:"¿Has estado en una relación donde sentías que 'algo estaba mal' pero no podías identificar qué?",opts:[["Sí, y duré mucho tiempo sin poder salir","Alta",3],["Sí, una o dos veces","Media",2],["Hubo señales y las vi a tiempo","Baja",1],["No reconozco ese patrón en mis relaciones","Muy baja",0]]},
+  {dim:"C · Exposición a vínculos narcisistas",q:"¿Alguna vez alguien te ha hecho sentir que 'eres demasiado sensible' cuando expresabas tu dolor?",opts:[["Sí, con frecuencia y terminé creyéndolo","Alta",3],["Sí, alguna vez","Media",2],["Lo escuché pero no lo interioricé","Baja",1],["No, mis relaciones han sido bastante respetuosas","Muy baja",0]]},
+  {dim:"C · Exposición a vínculos narcisistas",q:"¿Con qué frecuencia sientes o has sentido que debes 'ganarte' el amor de alguien?",opts:[["Casi siempre; es mi modo por defecto","Alta",3],["Bastante seguido","Media",2],["En alguna relación específica, no como patrón","Baja",1],["Rara vez o nunca","Muy baja",0]]},
+  {dim:"C · Exposición a vínculos narcisistas",q:"¿Reconoces el ciclo idealización → devaluación → descarte en alguna relación tuya?",opts:[["Sí, lo viví completamente y me costó salir","Alta",3],["Hay elementos que reconozco","Media",2],["Lo vi llegar y puse distancia","Baja",1],["No lo identifico en mis relaciones","Muy baja",0]]},
+  {dim:"C · Exposición a vínculos narcisistas",q:"Después de una ruptura, ¿cuánto tiempo tardas en recuperar tu sentido de identidad?",opts:[["Años; me pierdo totalmente en la persona","Alta",3],["Meses; es un proceso muy doloroso","Media",2],["Semanas; duele pero me recupero","Baja",1],["Relativamente rápido; sé quién soy","Muy baja",0]]},
+];
+
+/* ─── PERFILES ──────────────────────────────────────────────── */
+const profiles = {
+  "Salvador-Alta-Alta":    {name:"El Salvador Agotado",         tag:"Das todo a otros. Tu tanque lleva años vacío.",                   patron:"Buscas personas que 'necesitan' ser rescatadas. El amor se siente como un servicio que debes prestar para merecer quedarte.",suelta:"La creencia de que solo mereces amor si te sacrificas.",fortaleza:"Tu capacidad de cuidar puede transformarse en autocompasión radical, la más poderosa forma de sanar.",meaning:"Estás en el nivel más exigente de este patrón. Eres la que resuelve los problemas de todos — y la que colapsa en silencio. El agotamiento que sientes no es debilidad: es la señal de que llevas demasiado tiempo sin que nadie te cuide a ti.",bclText:"Tu perfil <strong>Salvador Agotado</strong> necesita un trabajo específico: aprender a recibir sin sentirte en deuda. En el entrenamiento te explico por qué tu cerebro equipara el amor con el sacrificio — y cómo salir de esa ecuación.",av:"shield"},
+  "Salvador-Alta-Media":   {name:"El Espejo que Sangra",        tag:"Absorbes el dolor ajeno como si fuera tuyo.",                     patron:"Te disuelves en el otro. Sus emociones gobiernan las tuyas hasta que ya no sabes dónde terminas tú y dónde empieza el problema.",suelta:"La confusión entre empatía y fusión emocional.",fortaleza:"Tu empatía profunda, bien dirigida, es una herramienta de sanación genuina.",meaning:"Sientes todo lo que el otro siente — a veces antes de que ellos lo sepan. Eso te hace increíblemente valiosa en una relación, pero también increíblemente vulnerable. El problema no es tu sensibilidad: es que no tienes un límite que te separe del dolor ajeno.",bclText:"Con tu perfil <strong>Espejo que Sangra</strong>, el trabajo más urgente es diferenciar cuándo estás presente desde el amor y cuándo estás ausente de ti misma. El entrenamiento te da las herramientas para hacer esa diferencia.",av:"mirror"},
+  "Salvador-Media-Alta":   {name:"El Guardián Herido",          tag:"Proteges a otros del dolor que tú mismo cargas.",                 patron:"Detectas el peligro en relaciones ajenas con claridad, pero en las propias ignoras señales que cualquier observador vería.",suelta:"La ilusión de que ayudar te mantiene a salvo de tener que mirarte.",fortaleza:"Tienes visión clara cuando se trata de los demás. Ahora necesitas volver esa mirada hacia adentro.",meaning:"Eres la persona a quien todos le piden consejo. Ves con nitidez los patrones de los demás. Pero en tus propias relaciones hay puntos ciegos enormes que te cuestan caro.",bclText:"Tu perfil <strong>Guardián Herido</strong> tiene una paradoja central que resolvemos en el entrenamiento: por qué es más fácil ver los problemas de los demás que los tuyos propios — y qué hacer con eso.",av:"shield"},
+  "Salvador-Baja-Alta":    {name:"El Guardián Consciente",      tag:"Ves el peligro. Ahora necesitas verte a ti.",                     patron:"Tu ayuda es genuina y medida, pero sigues buscando validación cuando das. El 'gracias' de los demás sigue siendo demasiado importante.",suelta:"El hábito de medir tu valor por lo que entregas a los demás.",fortaleza:"Tu madurez emocional ya está activa. El siguiente nivel es independencia total de la validación externa.",meaning:"Estás más avanzada que muchas en este trabajo. Tu patrón Salvador está bastante integrado — pero hay una última capa que aún opera en automático.",bclText:"Para tu perfil <strong>Guardián Consciente</strong>, el entrenamiento te lleva a la siguiente etapa: de la consciencia al cambio real en tus relaciones actuales.",av:"shield"},
+  "Víctima-Alta-Alta":     {name:"La Corriente Invisible",      tag:"Tu dolor es real. Y mereces más que sobrevivir.",                  patron:"El sufrimiento se ha vuelto tan familiar que se ha convertido en tu identidad relacional. Lo que más temes no es el dolor — es no saber quién eres sin él.",suelta:"La historia de que el amor siempre duele y que eso es todo lo que mereces.",fortaleza:"Tu sensibilidad, cuando está canalizada hacia ti misma, conecta con una profundidad que pocas personas conocen.",meaning:"Has vivido relaciones que te han dejado marcas reales. El problema no es que hayas sufrido — es que llevas ese sufrimiento como si te definiera. Y no te define. Eres mucho más que todo lo que te han hecho.",bclText:"Tu perfil <strong>Corriente Invisible</strong> necesita lo que el entrenamiento entrega primero: que entiendas que el patrón no es tu destino. Es un aprendizaje que puede cambiarse.",av:"wave"},
+  "Víctima-Alta-Media":    {name:"El Pájaro sin Jaula",         tag:"Ya sabes volar. Solo necesitas creerlo.",                         patron:"Te quedas en situaciones y relaciones que te limitan porque la libertad de salir te da más miedo que el dolor de quedarte.",suelta:"El miedo a la libertad que viene cuando ya no hay nada a quien culpar.",fortaleza:"Eres el perfil con mayor potencial de cambio rápido. Tienes más recursos de los que crees.",meaning:"Hay una parte de ti que ya sabe lo que necesita hacer. Pero otra parte frena, busca razones, espera señales. Esa tensión interna tiene un nombre — y en el entrenamiento te lo explico.",bclText:"Tu perfil <strong>Pájaro sin Jaula</strong> está en un punto de inflexión. El entrenamiento te da el empuje y la claridad para que el siguiente movimiento sea tuyo.",av:"dove"},
+  "Víctima-Media-Alta":    {name:"El Fantasma Enamorado",       tag:"Estás presente en todo, excepto en ti mism@.",                    patron:"Te vuelves invisible en las relaciones para no ser rechazada. Das sin pedir, cedes sin negociar, aguantas sin decirlo — hasta que ya no aguantas más.",suelta:"La creencia de que si te ven completa y con necesidades propias, te irán.",fortaleza:"Tu capacidad de sentir profundo puede anclar relaciones reales — cuando aprendas a hacerte visible.",meaning:"Has aprendido a ocupar el menor espacio posible para no molestar. Pero eso tiene un costo altísimo: nadie puede quererte de verdad si no pueden verte de verdad.",bclText:"Para tu perfil <strong>Fantasma Enamorado</strong>, el trabajo es aprender a existir plenamente en una relación. El entrenamiento empieza exactamente ahí.",av:"wave"},
+  "Víctima-Baja-Alta":     {name:"La Semilla Despertando",      tag:"Tienes el radar. Ahora confía en él.",                            patron:"Reconoces señales de alerta pero las justificas, las minimizas o esperas 'una más' antes de actuar.",suelta:"El exceso de beneficio de la duda que das cuando la situación no lo merece.",fortaleza:"Tu claridad interior ya está activa. Solo necesita práctica consistente.",meaning:"Estás en un momento importante: tu intuición te dice algo, y tu mente busca razones para no escucharla. El entrenamiento te enseña a cerrar esa brecha.",bclText:"Tu perfil <strong>Semilla Despertando</strong> está justo en el umbral. El entrenamiento te da lo que falta para que la consciencia se convierta en acción.",av:"dove"},
+  "Perseguidor-Alta-Alta": {name:"El Volcán Justo",             tag:"Tu rabia tiene razón. Y también tiene un costo muy alto.",        patron:"Controlas porque el abandono te aterra más que el conflicto. La intensidad que muestras afuera es directamente proporcional al miedo que hay adentro.",suelta:"La rabia como escudo contra la vulnerabilidad genuina.",fortaleza:"Tu claridad para ver lo que está mal en una relación es extraordinaria. Canalizada, eso es liderazgo.",meaning:"Has aprendido que la rabia te protege. Y en algún momento de tu vida, probablemente lo hizo. Pero ahora está alejando exactamente lo que más quieres: conexión real.",bclText:"Tu perfil <strong>Volcán Justo</strong> tiene una de las rutas más transformadoras del entrenamiento: entender qué hay debajo de la rabia — y qué puedes hacer con eso.",av:"bolt"},
+  "Perseguidor-Alta-Media":{name:"La Tormenta Leal",            tag:"Exiges porque temes perder. Y temes perder porque amas.",         patron:"Tu intensidad emocional es genuina, pero en las relaciones genera el efecto contrario al que buscas: aleja a quienes más quieres retener.",suelta:"El control como sustituto del apego seguro que nunca tuviste.",fortaleza:"Tu lealtad es feroz y real. Aprender a confiar la multiplica en lugar de consumirla.",meaning:"Amas intensamente — y eso es una fortaleza. El problema es que el miedo a perder lo que amas te lleva a aferrarte de maneras que terminan rompiendo lo que querías proteger.",bclText:"Para tu perfil <strong>Tormenta Leal</strong>, el entrenamiento trabaja el núcleo del patrón: construir apego seguro desde adentro, no desde el control del otro.",av:"bolt"},
+  "Perseguidor-Media-Alta":{name:"El Arquitecto del Caos Ajeno",tag:"Ves los errores de todos. ¿Y los tuyos?",                        patron:"Señalas con precisión lo que está mal afuera — es un mecanismo para no tener que mirar lo que duele adentro.",suelta:"El juicio como mecanismo de defensa ante tu propia vulnerabilidad.",fortaleza:"Tu capacidad analítica es genuina. Cuando la diriges hacia adentro, los cambios son rápidos y profundos.",meaning:"Tienes una mente muy aguda para ver los patrones de los demás. Eso es real. Pero hay un punto ciego importante: los propios. Y ese punto ciego es el que más cuesta en las relaciones.",bclText:"Para tu perfil <strong>Arquitecto del Caos Ajeno</strong>, el entrenamiento hace un giro específico: de analizar a los demás a entenderte a ti misma.",av:"bolt"},
+  "Perseguidor-Baja-Alta": {name:"El Estratega Herido",         tag:"Controlas desde la inteligencia. Pero el corazón no se controla.", patron:"Usas la razón para no sentir. Intelectualizas el dolor en lugar de atravesarlo — lo que lo hace más duradero, no más manejable.",suelta:"La armadura intelectual que bloquea la intimidad real.",fortaleza:"Tu mente es poderosa. Tu vulnerabilidad, cuando la dejas aparecer, es aún más.",meaning:"Puedes explicar con claridad lo que te pasó en cada relación. Pero explicar no es lo mismo que sanar. Hay una diferencia entre entender y atravesar.",bclText:"Para tu perfil <strong>Estratega Herido</strong>, el entrenamiento trabaja justo esa diferencia: cómo pasar de la comprensión intelectual a la transformación real.",av:"bolt"},
+};
+
+/* ─── SVG AVATARES ──────────────────────────────────────────── */
+const avSVG = {
+  shield: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="39" fill="rgba(136,161,140,0.15)" stroke="rgba(136,161,140,0.4)" stroke-width="1"/><path d="M40 16L60 27V45C60 56 51 64 40 68C29 64 20 56 20 45V27Z" fill="#88A18C"/><path d="M40 23L55 32V46C55 55 48 62 40 65C32 62 25 55 25 46V32Z" fill="#5a7a5e"/><line x1="40" y1="38" x2="40" y2="55" stroke="#d4e2d6" stroke-width="2.5" stroke-linecap="round"/><line x1="31" y1="46" x2="49" y2="46" stroke="#d4e2d6" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  mirror: `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="39" fill="rgba(126,153,180,0.15)" stroke="rgba(126,153,180,0.4)" stroke-width="1"/><ellipse cx="40" cy="36" rx="16" ry="19" fill="#7E99B4"/><ellipse cx="40" cy="36" rx="10" ry="13" fill="#5a7fa0"/><ellipse cx="40" cy="36" rx="6" ry="8" fill="rgba(220,232,242,0.4)"/><rect x="35" y="54" width="10" height="5" rx="2.5" fill="#7E99B4"/><rect x="29" y="59" width="22" height="3" rx="1.5" fill="#7E99B4" opacity="0.6"/></svg>`,
+  wave:   `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="39" fill="rgba(126,153,180,0.15)" stroke="rgba(126,153,180,0.4)" stroke-width="1"/><path d="M15 36 Q24 26 33 36 Q42 46 51 36 Q60 26 69 36" stroke="#7E99B4" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M15 46 Q24 36 33 46 Q42 56 51 46 Q60 36 69 46" stroke="#5a7fa0" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M15 56 Q24 46 33 56 Q42 66 51 56 Q60 46 69 56" stroke="#3a5a7a" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/></svg>`,
+  dove:   `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="39" fill="rgba(136,161,140,0.15)" stroke="rgba(136,161,140,0.4)" stroke-width="1"/><path d="M40 52C32 52 22 45 22 35C22 27 29 22 37 24C35 18 40 15 45 19C52 12 62 17 60 27C65 29 67 38 61 43C57 49 48 52 40 52Z" fill="#88A18C"/><path d="M22 35C17 33 14 38 19 43C22 47 28 45 30 41" fill="#5a7a5e"/><circle cx="52" cy="28" r="2" fill="rgba(212,226,214,0.8)"/><path d="M40 52L40 63" stroke="#88A18C" stroke-width="2" stroke-linecap="round"/><path d="M35 63L45 63" stroke="#88A18C" stroke-width="2" stroke-linecap="round"/></svg>`,
+  bolt:   `<svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="39" fill="rgba(187,111,88,0.15)" stroke="rgba(187,111,88,0.4)" stroke-width="1"/><polygon points="47,14 29,44 41,44 33,66 55,32 43,32" fill="#BB6F58"/><polygon points="47,14 31,42 41,42 33,66 53,34 43,34" fill="#d4896a"/></svg>`,
+};
+
+/* ─── ESTADO ─────────────────────────────────────────────────── */
+let answers = [], current = 0, currentProfile = null;
+
+/* ─── NAVEGACIÓN ─────────────────────────────────────────────── */
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo && window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ─── TEST ───────────────────────────────────────────────────── */
+function startTest() {
+  answers = new Array(Qs.length).fill(null);
+  current = 0;
+  goScreen('s-test');
+  renderQ();
+}
+
+function renderQ() {
+  const q = Qs[current];
+  const pct = Math.round(((current + 1) / Qs.length) * 100);
+  document.getElementById('prog-label').textContent = `Pregunta ${current + 1} de ${Qs.length}`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('q-dim').textContent = q.dim;
+  document.getElementById('q-text').textContent = q.q;
+
+  const container = document.getElementById('q-opts');
+  container.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const d = document.createElement('div');
+    d.className = 'opt' + (answers[current] === i ? ' sel' : '');
+    d.textContent = opt[0];
+    d.onclick = () => selectOpt(i);
+    container.appendChild(d);
+  });
+
+  document.getElementById('btn-prev').style.display   = current > 0 ? 'block' : 'none';
+  document.getElementById('btn-next').style.display   = (answers[current] !== null && current < Qs.length - 1) ? 'block' : 'none';
+  document.getElementById('btn-finish').style.display = (answers[current] !== null && current === Qs.length - 1) ? 'block' : 'none';
+}
+
+function selectOpt(i) {
+  answers[current] = i;
+  document.querySelectorAll('.opt').forEach((el, idx) => el.classList.toggle('sel', idx === i));
+  document.getElementById('btn-next').style.display   = current < Qs.length - 1 ? 'block' : 'none';
+  document.getElementById('btn-finish').style.display = current === Qs.length - 1 ? 'block' : 'none';
+}
+
+function nextQ() { if (answers[current] !== null) { current++; renderQ(); } }
+function prevQ() { if (current > 0) { current--; renderQ(); } }
+
+/* ─── CALCULAR Y CARGAR RESULTADO ────────────────────────────── */
+function finishTest() {
+  const rs = { S: 0, V: 0, P: 0 };
+  const ds = [], es = [];
+
+  Qs.forEach((q, qi) => {
+    const ai = answers[qi];
+    if (ai === null) return;
+    const opt = q.opts[ai];
+    if (qi < 5)       { if (opt[1] !== 'N') rs[opt[1]] += opt[2]; }
+    else if (qi < 10) { ds.push(opt[2]); }
+    else              { es.push(opt[2]); }
+  });
+
+  const rolMap  = { S: 'Salvador', V: 'Víctima', P: 'Perseguidor' };
+  const rol     = Object.entries(rs).sort((a, b) => b[1] - a[1])[0][0];
+  const rolName = rolMap[rol];
+  const depAvg  = ds.reduce((a, b) => a + b, 0) / ds.length;
+  const expAvg  = es.reduce((a, b) => a + b, 0) / es.length;
+  const dep     = depAvg >= 2.3 ? 'Alta' : depAvg >= 1.2 ? 'Media' : 'Baja';
+  const exp     = expAvg >= 2.3 ? 'Alta' : expAvg >= 1.2 ? 'Media' : 'Baja';
+
+  const key = `${rolName}-${dep}-${exp}`;
+  const p   = profiles[key] || profiles[`${rolName}-Alta-Alta`] || profiles['Víctima-Alta-Alta'];
+  p.rol = rolName; p.dep = dep; p.exp = exp;
+
+  currentProfile = p;
+  renderResult(p);
+  goScreen('s-result');
+}
+
+function renderResult(p) {
+  // Avatar y nombre
+  document.getElementById('r-avatar').innerHTML = avSVG[p.av] || avSVG.wave;
+  document.getElementById('r-name').textContent = p.name;
+  document.getElementById('r-tag').textContent  = p.tag;
+
+  // Métricas
+  document.getElementById('r-metrics').innerHTML = `
+    <div class="metric"><div class="ml">Rol</div><div class="mv">${p.rol}</div></div>
+    <div class="metric"><div class="ml">Dependencia</div><div class="mv">${p.dep}</div></div>
+    <div class="metric"><div class="ml">Exposición</div><div class="mv">${p.exp}</div></div>`;
+
+  // Insights
+  document.getElementById('r-insights').innerHTML = `
+    <div class="insight-item hl-cinn">
+      <div class="ilabel">El patrón que repites</div>
+      <div class="itext">${p.patron}</div>
+    </div>
+    <div class="insight-item">
+      <div class="ilabel">Lo que puedes soltar</div>
+      <div class="itext">${p.suelta}</div>
+    </div>
+    <div class="insight-item hl-teal">
+      <div class="ilabel">Tu mayor fortaleza oculta</div>
+      <div class="itext">${p.fortaleza}</div>
+    </div>`;
+
+  // Significado profundo
+  document.getElementById('r-meaning').textContent = p.meaning;
+
+  // Contexto personalizado en BCL
+  document.getElementById('bcl-personal').innerHTML = `
+    <div class="bp-label">Por qué este entrenamiento es para ti</div>
+    <div class="bp-text">${p.bclText}</div>`;
+}
+
+
+</script>
+</body>
+</html>
