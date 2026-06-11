@@ -582,10 +582,11 @@
     <!-- Contexto personalizado segun perfil -->
     <div class="bcl-personalized" id="bcl-personal"></div>
 
-    <!-- VIDEO YOUTUBE -->
+    <!-- VIDEO YOUTUBE — PRIMERO -->
+    <div class="eyebrow" style="margin-bottom:12px;">Mira esto antes de continuar</div>
     <div class="vsl-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; border-radius: 16px; margin-bottom: 1.5rem;">
       <iframe
-        src="https://www.youtube.com/embed/Uc63OXnGkSo?rel=0&modestbranding=1&controls=1"
+        src="https://www.youtube.com/embed/TU_CODIGO_AQUÍ?rel=0&modestbranding=1&controls=1"
         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: 16px;"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen>
@@ -593,7 +594,34 @@
     </div>
     <!-- FIN VIDEO -->
 
-    <!-- Lo que cubre -->
+    <!-- ── CTA DESPUÉS DEL VIDEO ───────────────────────────── -->
+    <div class="cta-block">
+      <div class="cta-label">Después de ver el video</div>
+      <div class="cta-title">¿Lista para trabajar<br>esto de verdad?</div>
+      <div class="cta-body">
+        Agenda una llamada conmigo. Revisamos tu diagnóstico, lo que está pasando en tu vida y te cuento cómo es el proceso de acompañamiento.
+      </div>
+
+      <!-- 🔧 REEMPLAZA EL href CON TU LINK DE CALENDLY / AGENDAMIENTO -->
+      <a class="btn btn-cinn btn-xl" href="PLACEHOLDER_LINK_AGENDAMIENTO" target="_blank" id="cta-book-btn">
+        📅 Agendar mi llamada ahora →
+      </a>
+
+      <div class="scarcity-note">
+        <div class="sc-dot"></div>
+        <span>Espacios limitados cada semana</span>
+      </div>
+    </div>
+
+    <div class="reassurance">
+      <div class="reassurance-icon">⚠️</div>
+      <div class="reassurance-text">
+        <strong>Esta llamada es para mujeres que están listas para invertir en su proceso.</strong><br>
+        Si todavía no estás segura de si quieres trabajar esto en serio, el video de arriba es el mejor lugar para empezar.
+      </div>
+    </div>
+
+    <div class="divider"></div>
     <div class="eyebrow" style="margin-bottom:14px;">Qué vas a entender en esta sesión</div>
     <div class="covers-list">
       <div class="cover-item">
@@ -627,32 +655,12 @@
 
     <div class="divider"></div>
 
-    <!-- CTA AGENDAR LLAMADA -->
-    <div class="cta-block">
-      <div class="cta-label">El siguiente paso</div>
-      <div class="cta-title">¿Quieres saber exactamente<br>qué hacer en tu caso?</div>
-      <div class="cta-body">
-        Hay un espacio para hablar contigo directamente. En esa llamada revisamos tu diagnóstico, lo que está pasando en tu vida y si hay una forma de trabajarlo juntas.<br><br>
-        No es un pitch de ventas. Es una conversación real.
-      </div>
-
-      <!-- 🔧 REEMPLAZA EL href CON TU LINK DE CALENDLY / AGENDAMIENTO -->
-      <a class="btn btn-cinn btn-xl" href="PLACEHOLDER_LINK_AGENDAMIENTO" target="_blank" id="cta-book-btn">
-        Quiero hablar contigo → Agendar mi llamada
+    <!-- CTA repetido al final para quienes leyeron todo -->
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ts);margin-bottom:14px;">¿Ya viste el video y estás lista?</div>
+      <a class="btn btn-cinn btn-xl" href="PLACEHOLDER_LINK_AGENDAMIENTO" target="_blank">
+        📅 Agendar mi llamada →
       </a>
-
-      <div class="scarcity-note">
-        <div class="sc-dot"></div>
-        <span>Espacios limitados cada semana</span>
-      </div>
-    </div>
-
-    <div class="reassurance">
-      <div class="reassurance-icon">🔒</div>
-      <div class="reassurance-text">
-        <strong>Sin compromiso de compra.</strong><br>
-        Esta llamada es para que las dos podamos ver si hay algo en lo que pueda acompañarte. Si no hay un fit real, te lo digo sin rodeos.
-      </div>
     </div>
 
     <button class="btn btn-ghost" onclick="goScreen('s-result')" style="font-size:11px;padding:10px;margin-top:4px;">← Volver a mi diagnóstico</button>
