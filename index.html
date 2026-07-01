@@ -166,6 +166,27 @@
     }
     .btn-ghost:hover { background: rgba(222,209,193,0.06); color: var(--tx); }
 
+    /* ─── BLOQUE PRESIÓN ─────────────────────────────────────── */
+    .bcl-pressure {
+      margin-bottom: 1.75rem;
+      padding: 1.25rem 1.25rem 1.25rem 1.4rem;
+      border-left: 3px solid rgba(187,111,88,0.5);
+      background: rgba(187,111,88,0.06);
+      border-radius: 0 12px 12px 0;
+    }
+    .bp2-line {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px; font-weight: 500;
+      color: var(--tx); line-height: 1.45;
+      margin-bottom: 6px;
+    }
+    .bp2-cta {
+      margin-top: 12px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cinn);
+    }
+
     /* CTA principal de la landing — más grande e impactante */
     .btn-xl {
       padding: 19px 24px;
@@ -263,7 +284,7 @@
     /* Hero de la landing */
     .bcl-hero {
       text-align: center;
-      padding: 1rem 0 0.5rem;
+      padding: 0.25rem 0 0.5rem;
     }
     .bcl-kicker {
       display: inline-block;
@@ -272,31 +293,31 @@
       color: #fff;
       background: var(--cinn);
       padding: 5px 14px; border-radius: 20px;
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.85rem;
     }
     .bcl-headline {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 38px; font-weight: 600;
-      line-height: 1.1; color: var(--tx);
-      margin-bottom: 14px;
+      font-size: 34px; font-weight: 600;
+      line-height: 1.08; color: var(--tx);
+      margin-bottom: 10px;
     }
     .bcl-headline em { color: var(--cinn); font-style: italic; }
-    .bcl-sub { font-size: 13px; color: var(--tm); line-height: 1.9; margin-bottom: 1.75rem; }
+    .bcl-sub { font-size: 13px; color: var(--tm); line-height: 1.9; margin-bottom: 1.25rem; }
 
     /* Contexto personalizado según perfil */
     .bcl-personalized {
       background: rgba(187,111,88,0.1);
       border-left: 3px solid var(--cinn);
       border-radius: 0 12px 12px 0;
-      padding: 1rem 1.1rem;
-      margin-bottom: 1.75rem;
+      padding: 0.7rem 1rem;
+      margin-bottom: 1.25rem;
     }
     .bcl-personalized .bp-label {
       font-size: 9px; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--cinn); margin-bottom: 6px;
+      color: var(--cinn); margin-bottom: 4px;
     }
-    .bcl-personalized .bp-text { font-size: 13px; color: var(--tm); line-height: 1.8; }
+    .bcl-personalized .bp-text { font-size: 11px; color: var(--tm); line-height: 1.7; }
     .bcl-personalized .bp-text strong { color: var(--tx); font-weight: 600; }
 
     /* Video placeholder */
@@ -574,13 +595,12 @@
     <div class="bcl-hero">
       <div class="bcl-kicker">Entrenamiento gratuito</div>
       <div class="bcl-headline">Cómo salir del patrón<br>que te tiene <em>repitiendo</em><br>las mismas relaciones</div>
-      <div class="bcl-sub">
-        Esto no es un curso. Es una sesión donde te explico el mecanismo exacto detrás de tu historia relacional — y los primeros pasos reales para cambiarlo.
-      </div>
     </div>
 
-    <!-- Contexto personalizado segun perfil -->
+    <!-- Contexto personalizado segun perfil — con presión -->
     <div class="bcl-personalized" id="bcl-personal"></div>
+
+
 
     <!-- VIDEO YOUTUBE — PRIMERO -->
     <div class="eyebrow" style="margin-bottom:12px;">Mira esto antes de continuar</div>
@@ -599,11 +619,11 @@
       <div class="cta-label">Después de ver el video</div>
       <div class="cta-title">¿Lista para trabajar<br>esto de verdad?</div>
       <div class="cta-body">
-        Agenda una llamada conmigo. Revisamos tu diagnóstico, lo que está pasando en tu vida y te cuento cómo podemos trabajar junt@s para lograr tus objetivos a nivel personal y relacional.
+        Agenda una llamada conmigo. Revisamos tu diagnóstico, lo que está pasando en tu vida y te cuento cómo es el proceso de acompañamiento.
       </div>
 
       <!-- 🔧 REEMPLAZA EL href CON TU LINK DE CALENDLY / AGENDAMIENTO -->
-      <a class="btn btn-cinn btn-xl" href="https://calendly.com/irenecardenas-coach/priorizate-ya" target="_blank" id="cta-book-btn">
+      <a class="btn btn-cinn btn-xl" href="PLACEHOLDER_LINK_AGENDAMIENTO" target="_blank" id="cta-book-btn">
         📅 Agendar mi llamada ahora →
       </a>
 
@@ -616,7 +636,7 @@
     <div class="reassurance">
       <div class="reassurance-icon">⚠️</div>
       <div class="reassurance-text">
-        <strong>Esta llamada es para mujeres que están listas para comprometerse con su proceso.</strong><br>
+        <strong>Esta llamada es para mujeres que están listas para invertir en su proceso.</strong><br>
         Si todavía no estás segura de si quieres trabajar esto en serio, el video de arriba es el mejor lugar para empezar.
       </div>
     </div>
@@ -644,7 +664,7 @@
     <div class="eyebrow" style="margin-bottom:12px;">Lo que otras mujeres vivieron</div>
     <div class="social-strip">
       <div class="social-card">
-        <div class="social-quote">"Entendí en 7 minutos lo que dos años de terapia no me habían podido explicar."</div>
+        <div class="social-quote">"Entendí en 20 minutos lo que dos años de terapia no me habían podido explicar."</div>
         <div class="social-name">ANDREA, 34 · BOGOTÁ</div>
       </div>
       <div class="social-card">
